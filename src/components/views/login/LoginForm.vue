@@ -1,18 +1,14 @@
 <script setup>
-const email = defineModel('email')
-const password = defineModel('password')
-const rememberMe = defineModel('rememberMe')
-const showPassword = defineModel('showPassword')
+import { reactive, ref } from 'vue';
+import { useLoginStore } from '@/stores';
 
-const emit = defineEmits(['login', 'facebook-login', 'google-login', 'toggle-password'])
+const dataUser = reactive({
+  email: '',
+  password: '',
+});
 
-const handleLogin = () => {
-  emit('login', { email: email.value, password: password.value, rememberMe: rememberMe.value })
-}
-
-const togglePasswordVisibility = () => {
-  emit('toggle-password')
-}
+const showPassword = ref(false);
+const loginStore = useLoginStore();
 </script>
 
 <template>
@@ -32,7 +28,7 @@ const togglePasswordVisibility = () => {
             </svg>
             <input
               id="email"
-              v-model="email"
+              v-model="dataUser.email"
               type="email"
               placeholder="seu@email.com"
               required
@@ -48,7 +44,7 @@ const togglePasswordVisibility = () => {
             </svg>
             <input
               id="password"
-              v-model="password"
+              v-model="dataUser.password"
               :type="showPassword ? 'text' : 'password'"
               placeholder="Digite sua senha"
               required
@@ -56,7 +52,7 @@ const togglePasswordVisibility = () => {
             <button
               type="button"
               class="toggle-password"
-              @click="togglePasswordVisibility"
+              @click="showPassword = !showPassword"
             >
               <svg v-if="!showPassword" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -77,7 +73,7 @@ const togglePasswordVisibility = () => {
           <a href="#" class="forgot-password">Esqueceu a senha?</a>
         </div>
 
-        <button type="submit" class="btn-login">
+        <button type="submit" class="btn-login" @click="loginStore.loginUser(dataUser)">
           Entrar
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
